@@ -86,7 +86,7 @@ void MainWindow::executeAlgorithm()
         double weight = 0.0;
         QMap<int, char> used = QMap<int, char>();
         used[n.getId()] = 1;
-        double order = 1.0;
+        double d = 0.85;
         while(!queue.empty())
         {
             int v = queue.front();
@@ -107,12 +107,14 @@ void MainWindow::executeAlgorithm()
                     }
                 }
             }
-            localSum /= order;
+            localSum *= d;
             weight += localSum;
-            order++;
+            d *= 0.85;
         }
         n.setWeight(weight);
-        ui->nodesTableWidget->setItem(index, 2, new QTableWidgetItem(QString::number(weight)));
+        QTableWidgetItem *item = new QTableWidgetItem();
+        item->setData(Qt::DisplayRole, QString::number(weight));
+        ui->nodesTableWidget->setItem(index, 2, item);
         index++;
     }
     ui->nodesTableWidget->sortByColumn(2, Qt::DescendingOrder);
