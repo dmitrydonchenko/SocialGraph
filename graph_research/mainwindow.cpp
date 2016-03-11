@@ -5,6 +5,7 @@
 #include <QTextStream>
 #include <QQueue>
 #include <QVector>
+#include <QDateTime>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -113,10 +114,31 @@ void MainWindow::executeAlgorithm()
         }
         n.setWeight(weight);
         QTableWidgetItem *item = new QTableWidgetItem();
-        item->setData(Qt::DisplayRole, QString::number(weight));
+        item->setData(Qt::DisplayRole, weight);
+        item->setData(Qt::EditRole, weight);
         ui->nodesTableWidget->setItem(index, 2, item);
         index++;
     }
     ui->nodesTableWidget->sortByColumn(2, Qt::DescendingOrder);
+
+    QString filename = "D:\\output.csv";
+    QFile f( filename );
+
+    if (f.open(QFile::WriteOnly | QFile::Truncate))
+    {
+        QTextStream data( &f );
+        QStringList strList;
+
+        for( int r = 0; r < ui->nodesTableWidget->rowCount(); ++r )
+        {
+            strList.clear();
+            for( int c = 0; c < ui->nodesTableWidget->columnCount(); ++c )
+            {
+                strList << "\" "+ui->nodesTableWidget->item( r, c )->text()+"\" ";
+            }
+            data << strList.join( ";" )+"\n";
+        }
+        f.close();
+    }
 }
 
